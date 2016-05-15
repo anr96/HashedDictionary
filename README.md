@@ -1,10 +1,8 @@
 #HW8 Hashed Dictionary 
 
-#First-Name Last-Name
+#Amanda Robinson
 
-TODO - Update your name in this readme.
-
-TODO - Add a badge from travis CI here
+[![Build Status](https://travis-ci.com/csc340-03-spring-2016/anr96-HW8.svg?token=sqKHHUsKkyZTggTth4Mt&branch=master)](https://travis-ci.com/csc340-03-spring-2016/anr96-HW8)
 
 ##Problem statement:
 Implement a Hashed Dictionary. You will have to first implement the necessary functions in `HashedEntry.h`
