@@ -23,7 +23,38 @@ public:
     void operator=(const ItemType&);
 };
 
-//TODO Implement the necessary functions
+// Implement the necessary functions
+
+template<class KeyType, class ItemType>
+HashedEntry<KeyType,ItemType>::HashedEntry() { }
+
+
+template<class KeyType, class ItemType>
+HashedEntry<KeyType,ItemType>::HashedEntry(KeyType searchKey, ItemType newEntry){
+    Entry<KeyType,ItemType>::setKey(searchKey);
+    Entry<KeyType,ItemType>::setItem(newEntry);
+    setNext(nullptr);
+}
+
+
+template<class KeyType, class ItemType>
+HashedEntry<KeyType,ItemType>::HashedEntry(KeyType searchKey, ItemType newEntry, HashedEntry *nextEntryPtr){
+    Entry<KeyType,ItemType>::setKey(searchKey);
+    Entry<KeyType,ItemType>::setItem(newEntry);
+    setNext(nextEntryPtr);
+}
+
+
+template<class KeyType, class ItemType>
+void HashedEntry<KeyType,ItemType>::setNext(HashedEntry *nextEntryPtr) {
+    nextPtr = nextEntryPtr;
+}
+
+template<class KeyType, class ItemType>
+HashedEntry<KeyType, ItemType> *HashedEntry<KeyType, ItemType>::getNext() const {
+    return nextPtr;
+}
+
 
 template<class KeyType, class ItemType>
 void HashedEntry<KeyType, ItemType>::operator=(const ItemType& newItem){
@@ -31,6 +62,4 @@ void HashedEntry<KeyType, ItemType>::operator=(const ItemType& newItem){
     this->setItem(newItem);
 
 };
-
-
 
