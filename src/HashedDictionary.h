@@ -136,48 +136,133 @@ HashedEntry<KeyType, ItemType> &HashedDictionary<KeyType, ItemType>::operator[](
  */
 
 /**
- * TODO IMPLEMENT THE REQUIRED BELOW
+ * IMPLEMENT THE REQUIRED BELOW
  */
 
 template<class KeyType, class ItemType>
 void HashedDictionary<KeyType, ItemType>::destroyDictionary() {
-    //TODO
-
+    for (int i = 0; i < DEFAULT_SIZE; i++)
+        if (hashTable[i] != NULL) { //get rid of each item until null
+            HashedEntry<KeyType,ItemType> *prevEntry = NULL;
+            HashedEntry<KeyType,ItemType> *entry = hashTable[i];
+            while (entry != NULL) {
+                prevEntry = entry;
+                entry = entry->getNext();
+                delete prevEntry;
+            }
+        }
+    itemCount = 0; //implied by lack of items in the table
+    delete[] hashTable;
 }
 
 template<class KeyType, class ItemType>
 bool HashedDictionary<KeyType, ItemType>::isEmpty() const {
-    //TODO
+    /** Sees whether this dictionary is empty.@return True if the dictionary is empty */
+    return itemCount == 0;
+
 }
 
 template<class KeyType, class ItemType>
 int HashedDictionary<KeyType, ItemType>::getNumberOfItems() const {
-    //TODO
+    /** Gets the number of items in this dictionary. @return The number of items in the dictionary. */
+    return itemCount;
 }
 
 template<class KeyType, class ItemType>
 bool HashedDictionary<KeyType, ItemType>::add(const KeyType &searchKey, const ItemType &newItem) {
-    //TODO
-    return false;
+    //Inserts an item into this dictionary according to the item’s search key.
+    int hash = getHashIndex(searchKey);
+
+        //insertion when there is nothing at the index
+    if (hashTable[hash] == NULL){
+        hashTable[hash] = new HashedEntry<KeyType,ItemType>(searchKey,newItem);
+        itemCount++;
+        return true;
+    }
+
+
+    HashedEntry<KeyType,ItemType>* head = hashTable[hash];
+    HashedEntry<KeyType,ItemType>* current = head;
+    //already know that it's not empty; insertion at front
+    do{
+        if(current->getKey()==searchKey){ //searchKey matches
+            current->getItem()= newItem;
+        }
+        current = current->getNext();
+    }while(current != nullptr); // exits when reaches last node.
+
+
+    //Add node to link to the other nodes; at the head of chain
+    current=new HashedEntry<KeyType,ItemType>();
+    current->setItem(newItem); // set password
+    current->setNext(head); // set the next pointer to be the old head.
+    hashTable[hash]=current;
+
+    itemCount++;
+    return true;
 }
 
 template<class KeyType, class ItemType>
 bool HashedDictionary<KeyType, ItemType>::remove(const KeyType &searchKey) {
-    //TODO
+    //Removes an item with the given search key from this dictionary.
+    int hash = getHashIndex(searchKey);
+
+    if (hashTable[hash] != NULL && itemCount>1){
+        HashedEntry<KeyType,ItemType> *prevEntry = NULL;
+        HashedEntry<KeyType,ItemType> *entry = hashTable[hash];
+        while (entry->getNext() != NULL && entry->getKey() != searchKey){
+            prevEntry = entry;
+            entry = entry->getNext();
+        }
+        if(entry->getKey() == searchKey){
+            if (prevEntry == NULL){
+                HashedEntry<KeyType,ItemType> *nextEntry = entry->getNext();
+                delete entry;
+                hashTable[hash] = nextEntry;
+            }
+            else{
+                HashedEntry<KeyType,ItemType> *next = entry->getNext();
+                delete entry;
+                prevEntry->setNext(next);
+            }
+        }
+        itemCount--;
+        return true;
+    }
     return false;
 }
 
 template<class KeyType, class ItemType>
-ItemType HashedDictionary<KeyType, ItemType>::getItem(const KeyType &searchKey) const {
-    //TODO
+ItemType HashedDictionary<KeyType, ItemType>::getItem(const KeyType &searchKey) const{
+    //Retrieves an item with a given search key from a dictionary.
+    if(!contains(searchKey) || itemCount<1){
+        throw std::exception();
+    }
 
-    return nullptr;
+    int hash = getHashIndex(searchKey);
+    if (hashTable[hash]) {
+        HashedEntry<KeyType, ItemType> *current_element = hashTable[hash];
+        while (current_element->getKey() != searchKey && current_element->getNext()) {
+            current_element = current_element->getNext();
+        }
+        return current_element->getItem();
+    }
 }
+
 
 template<class KeyType, class ItemType>
 bool HashedDictionary<KeyType, ItemType>::contains(const KeyType &searchKey) const {
-    //TODO
-
+    //Sees whether this dictionary contains an item with a given search key.
+    int hash = getHashIndex(searchKey);
+    if (hashTable[hash]){
+        HashedEntry<KeyType, ItemType> *current_element = hashTable[hash];
+        while (current_element->getKey() != searchKey && current_element->getNext()){
+            current_element = current_element->getNext();
+        }
+        if (current_element->getKey() == searchKey){
+            return true;
+        }
+    }
     return false;
 }
 
